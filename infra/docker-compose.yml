@@ -1,0 +1,44 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: qdt
+      POSTGRES_PASSWORD: qdt
+      POSTGRES_DB: qdt
+    ports: ["5432:5432"]
+    volumes: ["pgdata:/var/lib/postgresql/data"]
+
+  redis:
+    image: redis:7
+    ports: ["6379:6379"]
+
+  twin-core:
+    build: ../services/twin-core
+    environment:
+      API_AUTH_TOKEN: ${API_AUTH_TOKEN}
+      DATABASE_URL: postgresql+psycopg://qdt:qdt@postgres:5432/qdt
+      REDIS_URL: redis://redis:6379/0
+    depends_on: [postgres, redis]
+    ports: ["8001:8001"]
+
+  orchestrator:
+    build: ../services/orchestrator
+    environment:
+      API_AUTH_TOKEN: ${API_AUTH_TOKEN}
+      TWINCORE_URL: http://twin-core:8001
+      QADAPTER_URL: http://quantum-adapter:8003
+      ROUTING_POLICY_PATH: /app/policy/policy.yaml
+    volumes:
+      - ../services/orchestrator/policy:/app/policy
+    depends_on: [twin-core]
+    ports: ["8002:8002"]
+
+  quantum-adapter:
+    build: ../services/quantum-adapter
+    environment:
+      API_AUTH_TOKEN: ${API_AUTH_TOKEN}
+      MODE: SIMULATOR
+    ports: ["8003:8003"]
+
+volumes:
+  pgdata:

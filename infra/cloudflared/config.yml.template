@@ -1,0 +1,14 @@
+# Place as:
+# - Windows: C:\Users\<YOU>\.cloudflared\config.yml
+# - Linux/macOS: ~/.cloudflared/config.yml
+#
+# After: cloudflared tunnel create qdt
+# Update credentials-file to the generated <TUNNEL-UUID>.json path.
+
+tunnel: qdt
+credentials-file: /path/to/.cloudflared/<TUNNEL-UUID>.json
+
+ingress:
+  - hostname: qdt.plancktech.com
+    service: http://localhost:8002
+  - service: http_status:404
