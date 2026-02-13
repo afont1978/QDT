@@ -1,0 +1,5 @@
+thresholds:
+  min_size_for_quantum: 200
+  min_deadline_ms_for_quantum: 15000
+risk_blocks_quantum:
+  - CRITICAL
